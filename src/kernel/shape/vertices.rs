@@ -14,19 +14,16 @@ pub struct Vertices<'r> {
 impl Vertices<'_> {
     /// Add a vertex to the shape
     ///
-    /// Logs a warning, if the vertex is not unique, meaning if another vertex
-    /// defined by the same point already exists.
+    /// # Panics
+    ///
+    /// Panics, if the vertex is not unique, meaning if another vertex defined
+    /// by the same point already exists.
     ///
     /// In the context of of vertex uniqueness, points that are close to each
     /// other are considered identical. The minimum distance between distinct
     /// vertices can be configured using [`Shape::with_minimum_distance`].
     ///
     /// # Implementation note
-    ///
-    /// This method is intended to actually validate vertex uniqueness: To
-    /// panic, if duplicate vertices are found. This is currently not possible,
-    /// as the presence of bugs in the sweep and transform code would basically
-    /// break ever model, due to validation errors.
     ///
     /// In the future, this method is likely to validate more than just vertex
     /// uniqueness. See documentation of [`crate::kernel`] for some context on
