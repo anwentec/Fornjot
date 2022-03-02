@@ -1,5 +1,3 @@
-use tracing::warn;
-
 use crate::{kernel::topology::vertices::Vertex, math::Scalar};
 
 use super::{
@@ -44,7 +42,7 @@ impl Vertices<'_> {
             let distance = (existing.point() - vertex.point()).magnitude();
 
             if distance < self.min_distance {
-                warn!(
+                panic!(
                     "Invalid vertex: {vertex:?}; \
                     identical vertex at {existing:?}",
                 );
@@ -74,12 +72,8 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     #[should_panic]
     fn create_invalid() {
-        // Test is ignored, until vertex validation can be enabled for real.
-        // See implementation note on `Vertices::create`.
-
         let mut shape = Shape::new().with_min_distance(MIN_DISTANCE);
 
         shape.vertices().add(Point::from([0., 0., 0.]));
