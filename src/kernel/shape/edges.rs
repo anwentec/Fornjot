@@ -9,12 +9,13 @@ use crate::{
 use super::{
     curves::Curves,
     handle::{Handle, Storage},
-    EdgesInner,
+    EdgesInner, VerticesInner,
 };
 
 /// The edges of a shape
 pub struct Edges<'r> {
     pub(super) curves: Curves,
+    pub(super) vertices: &'r mut VerticesInner,
     pub(super) edges: &'r mut EdgesInner,
 }
 
@@ -34,6 +35,15 @@ impl Edges<'_> {
     /// the future, it can add the edge to the proper internal data structures,
     /// and validate any constraints that apply to edge creation.
     pub fn add(&mut self, edge: Edge) -> Handle<Edge> {
+        for vertices in &edge.vertices {
+            for vertex in vertices {
+                assert!(
+                    self.vertices.contains(vertex.storage()),
+                    "Edge validation failed: {vertex:?} is not part of shape",
+                );
+            }
+        }
+
         let storage = Storage::new(edge);
         let handle = storage.handle();
 
