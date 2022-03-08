@@ -2,7 +2,10 @@ use crate::{
     debug::DebugInfo,
     kernel::{
         shape::Shape,
-        topology::{edges::Cycle, faces::Face},
+        topology::{
+            edges::{Cycle, Edge},
+            faces::Face,
+        },
     },
     math::{Aabb, Scalar},
 };
@@ -45,7 +48,14 @@ impl ToShape for fj::Difference2d {
         for cycle in cycles {
             let mut edges = Vec::new();
             for edge in &cycle.edges {
-                let edge = shape.edges().add(edge.get().clone());
+                let curve = shape.curves().add(*edge.curve.get());
+
+                let vertices = edge.vertices.clone().map(|vertices| {
+                    // TASK: We're adding duplicate vertices here.
+                    vertices.map(|vertex| shape.vertices().add(*vertex.get()))
+                });
+
+                let edge = shape.edges().add(Edge { curve, vertices });
                 edges.push(edge);
             }
 
